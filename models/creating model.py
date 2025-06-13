@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score
 
 # Load dataset
-df = pd.read_csv("Chronic_Kidney_Dsease_data.csv")
+df = pd.read_csv("data/Chronic_Kidney_Dsease_data.csv")
 
 # Strip whitespace in column names
 df.columns = df.columns.str.strip()
@@ -75,10 +75,9 @@ print("Accuracy:", accuracy_score(y_test, y_pred))
 print("Classification Report:\n", classification_report(y_test, y_pred))
 
 # Save model and scaler for later use
-with open("ckd_model.pkl", "wb") as f:
+with open("models/ckd_model.pkl", "wb") as f:
     pickle.dump(model, f)
-
-with open("scaler.pkl", "wb") as f:
+with open("models/scaler.pkl", "wb") as f:
     pickle.dump(scaler, f)
 
 print("Model and scaler saved successfully.")
