@@ -27,9 +27,9 @@ categorical_cols = df.select_dtypes(include='object').columns.tolist()
 if 'Diagnosis' in categorical_cols:
     categorical_cols.remove('Diagnosis')
 
-for col in categorical_cols:
-    le = LabelEncoder()
-    df[col] = le.fit_transform(df[col])
+# for col in categorical_cols:
+#     le = LabelEncoder()
+#     df[col] = le.fit_transform(df[col])
 
 # Select 12 features for your model
 features = [

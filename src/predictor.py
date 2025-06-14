@@ -119,4 +119,3 @@ class CKDPredictor:
             else:
                 st.success("✅ The model predicts that you **likely do NOT have CKD**.")
 
-            st.info(f"🧠 Model Confidence (estimated): `{prob}`")
