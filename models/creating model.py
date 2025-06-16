@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score
 
@@ -26,10 +26,6 @@ for col in df.columns:
 categorical_cols = df.select_dtypes(include='object').columns.tolist()
 if 'Diagnosis' in categorical_cols:
     categorical_cols.remove('Diagnosis')
-
-# for col in categorical_cols:
-#     le = LabelEncoder()
-#     df[col] = le.fit_transform(df[col])
 
 # Select 12 features for your model
 features = [

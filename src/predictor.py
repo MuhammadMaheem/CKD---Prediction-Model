@@ -72,10 +72,6 @@ class CKDPredictor:
             else:
                 st.warning("Feature importance not available for this model.")
 
-        if st.sidebar.checkbox("Download Cleaned Dataset"):
-            csv = self.df.to_csv(index=False)
-            st.download_button("📥 Download Dataset", data=csv, file_name="cleaned_ckd_dataset.csv", mime="text/csv")
-
     def form_inputs(self):
         st.subheader("🩺 Enter Your Medical Information")
         inputs = {}
