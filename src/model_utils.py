@@ -1,9 +1,16 @@
-import pickle
-import os
-import streamlit as st
+import pickle # For loading serialized model and scaler
+import os # For file path checks
+import streamlit as st # For UI feedback in case of missing files   
 
 @st.cache_resource
 def load_model_and_scaler():
+    """
+    Loads the pre-trained CKD prediction model and its corresponding scaler.
+    This function is cached by Streamlit to avoid reloading on every rerun.
+
+    Returns:
+        tuple: (model, scaler) if files exist, else (None, None)
+    """
     model_path = "models/ckd_model.pkl"
     scaler_path = "models/scaler.pkl"
     

@@ -4,6 +4,11 @@
 An interactive machine learning web app using **Streamlit** to predict Chronic Kidney Disease (CKD) from medical features.
 
 ---
+You can View it on Github: [GitHub Link CKD](https://github.com/MuhammadMaheem/CDK---Prediction-Model)
+
+You can also View the Live Demo on streamlit app: [StreamLit app](https://ckd-prediction-model-sfyp.streamlit.app/)
+
+---
 
 ## About Dataset
 ### Overview

@@ -9,6 +9,12 @@ from src.model_utils import load_model_and_scaler
 
 class CKDPredictor:
     def __init__(self):
+        """
+        Initializes the CKDPredictor class:
+        - Loads the pre-trained machine learning model and scaler using a utility function.
+        - Loads the dataset and prepares it for analysis.
+        """
+
         self.model, self.scaler = load_model_and_scaler()
         self.data_path = "data/Chronic_Kidney_Dsease_data.csv"
         if not os.path.exists(self.data_path):
@@ -19,8 +25,30 @@ class CKDPredictor:
             self.prepare_data()
 
     def prepare_data(self):
+        """
+        Cleans the dataset by:
+        - Removing rows with missing values.
+        - Dropping irrelevant columns such as 'PatientID' and 'DoctorInCharge'.
+        """
         self.df.dropna(inplace=True)
         self.df.drop(columns=[col for col in ["PatientID", "DoctorInCharge"] if col in self.df.columns], inplace=True)
+
+    def bin_feature(self, series, bins=5):
+        """
+        Safely bins a numeric series with unique string labels.
+        Automatically handles duplicate values or irregular spreads.
+        """
+        if series.nunique() <= 1:
+            return pd.Series(["Only one value"] * len(series), index=series.index)
+
+        try:
+            binned = pd.qcut(series, q=bins, duplicates='drop')
+        except ValueError:
+            binned = pd.cut(series, bins=bins)
+
+        # Recreate labels for clarity
+        bin_labels = [f"{round(l, 1)} - {round(r, 1)}" for l, r in zip(binned.cat.categories.left, binned.cat.categories.right)]
+        return pd.cut(series, bins=binned.cat.categories, labels=bin_labels, include_lowest=True)
 
     def data_analysis(self):
         st.subheader("🔍 Dataset Overview")
@@ -55,6 +83,28 @@ class CKDPredictor:
             ax.set_xticklabels(["No CKD", "CKD"])
             st.pyplot(fig)
 
+        if st.sidebar.checkbox("📊 CKD vs No CKD by Binned Features"):
+            st.subheader("🧮 Compare CKD Distribution Across Feature Ranges")
+            numeric_cols = self.df.select_dtypes(include=[np.number]).columns.tolist()
+            selected_feature = st.selectbox("Select feature to bin and visualize", numeric_cols, key="binning")
+
+            binned_series = self.bin_feature(self.df[selected_feature], bins=5)
+            binned_df = pd.DataFrame({
+                "Binned": binned_series,
+                "Diagnosis": self.df["Diagnosis"]
+            })
+
+            ct = pd.crosstab(binned_df["Binned"], binned_df["Diagnosis"])
+            ct.columns = ["No CKD", "CKD"]
+            ct = ct.sort_index()
+
+            fig, ax = plt.subplots()
+            ct.plot(kind="bar", stacked=True, ax=ax, color=["skyblue", "salmon"])
+            ax.set_title(f"CKD vs No CKD by {selected_feature} Ranges")
+            ax.set_xlabel(f"{selected_feature} Ranges")
+            ax.set_ylabel("Count")
+            st.pyplot(fig)
+
         if st.sidebar.checkbox("Feature Importance (if model is tree-based)"):
             if hasattr(self.model, "feature_importances_"):
                 importance = self.model.feature_importances_
@@ -71,7 +121,7 @@ class CKDPredictor:
                 st.pyplot(fig)
             else:
                 st.warning("Feature importance not available for this model.")
-
+   
     def form_inputs(self):
         st.subheader("🩺 Enter Your Medical Information")
         inputs = {}
